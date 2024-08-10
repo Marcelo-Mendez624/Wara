@@ -138,11 +138,14 @@ public class NewBehaviourScript : MonoBehaviour
     {
         if(Input.GetButtonDown("Fire1"))
         {
-            Collider2D[] objetos = Physics2D.OverlapCircleAll(SwordPosition, Radius);
+            Collider2D[] objetos = Physics2D.OverlapCircleAll(SwordPosition.position, Radius);
 
             foreach(Collider2D colli in objetos)
             {
-                colli.transform.GetComponent<Enemy>().TakeDamage();
+                if(colli.CompareTag("Enemy"))
+                {
+                    colli.transform.GetComponent<Enemy>().TakeDamage();
+                }
             }
 
         }

@@ -36,7 +36,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void TakeDamage()
+    public void TakeDamage()
     {
         life = life - 1;
     }

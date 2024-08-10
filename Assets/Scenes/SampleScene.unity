@@ -207,10 +207,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  jumpForce: 10
-  dashForce: 20
-  dashDuration: 0.1
+  jumpForce: 5
+  dashForce: 50
+  dashDuration: 0.3
   dashCooldown: 0.5
+  fallMultiplier: 3
+  lowJumpMultiplier: 2
+  Charactersize: 0.2
+  dashCooldownTimer: 0
 --- !u!50 &335703739
 Rigidbody2D:
   serializedVersion: 4
@@ -247,7 +251,7 @@ RectTransform:
   m_GameObject: {fileID: 335703736}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

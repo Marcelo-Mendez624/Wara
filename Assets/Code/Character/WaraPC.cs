@@ -9,13 +9,24 @@ public class NewBehaviourScript : MonoBehaviour
     public float dashForce = 200f;
     public float dashDuration = 0.1f; // Duración del dash
     public float dashCooldown = 0.5f; // Tiempo de espera entre dashes
+    public float fallMultiplier = 2.5f;
+    public float lowJumpMultiplier = 2f;
+
+    public float Charactersize = .2f;
+
+    public float dashCooldownTimer;
+
     private Rigidbody2D rb;
     private bool isGrounded;
     private bool canDoubleJump;
     private bool isDashing;
-     private float dashTime;
-    private float dashCooldownTimer;
+    private float dashTime;
 
+    private Transform SwordPosition;
+    private float Radius;
+
+     
+    
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -26,6 +37,8 @@ public class NewBehaviourScript : MonoBehaviour
         Move();
         Jump();
         HandleDash();
+        AdjustFallSpeed();
+        Golpe();
     }
 
     void Move()
@@ -35,8 +48,8 @@ public class NewBehaviourScript : MonoBehaviour
         float moveInput = Input.GetAxis("Horizontal");
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
 
-        if (moveInput > 0) transform.localScale = new Vector3(1, 1, 1);  // Flip character sprite to the right
-        else if (moveInput < 0) transform.localScale = new Vector3(-1, 1, 1); // Flip character sprite to the left
+        if (moveInput > 0) transform.localScale = new Vector3(Charactersize, Charactersize, Charactersize);  // Flip character sprite to the right
+        else if (moveInput < 0) transform.localScale = new Vector3(-Charactersize, Charactersize, Charactersize); // Flip character sprite to the left
     }
 
     void Jump()
@@ -50,6 +63,22 @@ public class NewBehaviourScript : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             canDoubleJump = false;
+        }
+    }
+
+    void AdjustFallSpeed()
+    {
+        if (rb.velocity.y < 0) // When falling
+        {
+            rb.gravityScale = fallMultiplier;
+        }
+        else if (rb.velocity.y > 0 && !Input.GetButton("Jump")) // When rising but not holding jump
+        {
+            rb.gravityScale = lowJumpMultiplier;
+        }
+        else
+        {
+            rb.gravityScale = 1f; // Normal gravity
         }
     }
 
@@ -79,9 +108,6 @@ public class NewBehaviourScript : MonoBehaviour
         dashTime = dashDuration;
         dashCooldownTimer = 0f;
 
-        // Reset velocity before applying force
-        rb.velocity = Vector2.zero;
-
         // Apply a force in the direction the character is facing
         rb.AddForce(new Vector2(transform.localScale.x * dashForce, 0f), ForceMode2D.Impulse);
     }
@@ -106,4 +132,20 @@ public class NewBehaviourScript : MonoBehaviour
             isGrounded = false;
         }
     }
+
+
+    void Golpe()
+    {
+        if(Input.GetButtonDown("Fire1"))
+        {
+            Collider2D[] objetos = Physics2D.OverlapCircleAll(SwordPosition, Radius);
+
+            foreach(Collider2D colli in objectos)
+            {
+                colli.transform.GetComponent<Enemy>().TakeDamage();
+            }
+
+        }
+    }
+
 }

@@ -140,7 +140,7 @@ public class NewBehaviourScript : MonoBehaviour
         {
             Collider2D[] objetos = Physics2D.OverlapCircleAll(SwordPosition, Radius);
 
-            foreach(Collider2D colli in objectos)
+            foreach(Collider2D colli in objetos)
             {
                 colli.transform.GetComponent<Enemy>().TakeDamage();
             }

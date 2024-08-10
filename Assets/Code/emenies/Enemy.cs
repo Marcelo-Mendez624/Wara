@@ -6,7 +6,9 @@ public class Enemy : MonoBehaviour
 {
     public float speed = 2f; // Velocidad del enemigo
     public int damage = 1; // Daño que hace el enemigo al jugador
+    public int life = 3;
     private Transform target; // Objetivo del enemigo (el jugador)
+    
 
     void Start()
     {
@@ -32,6 +34,11 @@ public class Enemy : MonoBehaviour
             // Destruir al enemigo después de colisionar con el jugador
             Destroy(gameObject);
         }
+    }
+
+    void TakeDamage()
+    {
+        life = life - 1;
     }
 }
 

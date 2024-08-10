@@ -22,8 +22,6 @@ public class NewBehaviourScript : MonoBehaviour
     private bool isDashing;
     private float dashTime;
 
-    private Transform SwordPosition;
-    private float Radius;
 
      
     
@@ -38,7 +36,6 @@ public class NewBehaviourScript : MonoBehaviour
         Jump();
         HandleDash();
         AdjustFallSpeed();
-        Golpe();
     }
 
     void Move()
@@ -133,22 +130,5 @@ public class NewBehaviourScript : MonoBehaviour
         }
     }
 
-
-    void Golpe()
-    {
-        if(Input.GetButtonDown("Fire1"))
-        {
-            Collider2D[] objetos = Physics2D.OverlapCircleAll(SwordPosition.position, Radius);
-
-            foreach(Collider2D colli in objetos)
-            {
-                if(colli.CompareTag("Enemy"))
-                {
-                    colli.transform.GetComponent<Enemy>().TakeDamage();
-                }
-            }
-
-        }
-    }
 
 }

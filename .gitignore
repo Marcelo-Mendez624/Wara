@@ -1,0 +1,67 @@
+# Archivos de configuración del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos generados por Unity
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+Logs/
+MemoryCaptures/
+
+# Archivos de caché
+*.swp
+*.swo
+
+# Archivos específicos de plataforma
+*.apk
+*.aab
+*.xcodeproj
+*.xcworkspace
+
+# Archivos de configuración del editor
+*.suo
+*.user
+*.userprefs
+*.csproj
+*.pidb
+*.sln
+*.vsp
+*.ncb
+
+# Archivos de compilación
+*.dll
+*.exe
+*.pdb
+*.mdb
+
+# Archivos de backup
+*.bak
+*.tmp
+
+# Archivos de configuración del IDE
+.vscode/
+
+# Unity
+*.csproj
+*.pidb
+*.suo
+*.user
+*.userprefs
+*.unityproj
+*.booproj
+*.sln
+*.ncb
+*.vscode/
+
+# Carpeta de integración continua
+.ci/
+
+# Otros
+*.log
+*.csv
+*.json
+*.yml
+*.yaml

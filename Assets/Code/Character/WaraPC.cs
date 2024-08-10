@@ -13,7 +13,7 @@ public class NewBehaviourScript : MonoBehaviour
     private bool isGrounded;
     private bool canDoubleJump;
     private bool isDashing;
-    private float dashTime;
+     private float dashTime;
     private float dashCooldownTimer;
 
     void Start()
@@ -25,11 +25,13 @@ public class NewBehaviourScript : MonoBehaviour
     {
         Move();
         Jump();
-        Dash();
+        HandleDash();
     }
 
     void Move()
     {
+        if(isDashing) return;
+
         float moveInput = Input.GetAxis("Horizontal");
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
 
@@ -51,14 +53,42 @@ public class NewBehaviourScript : MonoBehaviour
         }
     }
 
-    void Dash()
+    void HandleDash()
     {
-         dashCooldownTimer += Time.deltaTime;
+        dashCooldownTimer += Time.deltaTime;
 
-        if (Input.GetButtonDown("Fire3"))
+        if (Input.GetButtonDown("Fire3") && dashCooldownTimer >= dashCooldown && !isDashing)
         {
-             rb.AddForce(new Vector2(transform.localScale.x * dashForce, 0f), ForceMode2D.Impulse);
+            StartDash();
         }
+
+        if (isDashing)
+        {
+            dashTime -= Time.deltaTime;
+
+            if (dashTime <= 0)
+            {
+                EndDash();
+            }
+        }
+    }
+
+    void StartDash()
+    {
+        isDashing = true;
+        dashTime = dashDuration;
+        dashCooldownTimer = 0f;
+
+        // Reset velocity before applying force
+        rb.velocity = Vector2.zero;
+
+        // Apply a force in the direction the character is facing
+        rb.AddForce(new Vector2(transform.localScale.x * dashForce, 0f), ForceMode2D.Impulse);
+    }
+
+    void EndDash()
+    {
+        isDashing = false;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

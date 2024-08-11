@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -69,5 +70,10 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
+    internal void Stop()
+    {
+        this.enabled = false;
+        rb.velocity = Vector2.zero;
+    }
 }
 

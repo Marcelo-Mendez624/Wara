@@ -2,7 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public enum DeathState
+{
+    Time,
+    Dead
+}
+
+public class WaraPC : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float jumpForce = 10f;
@@ -11,6 +17,7 @@ public class NewBehaviourScript : MonoBehaviour
     public float dashCooldown = 0.5f; // Tiempo de espera entre dashes
     public float fallMultiplier = 2.5f;
     public float lowJumpMultiplier = 2f;
+    public Animator animator;
 
     public float Charactersize = .2f;
 
@@ -23,8 +30,6 @@ public class NewBehaviourScript : MonoBehaviour
     private float dashTime;
 
 
-     
-    
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -130,5 +135,34 @@ public class NewBehaviourScript : MonoBehaviour
         }
     }
 
+
+    public void Dead(DeathState state)
+    {
+        this.enabled = false;
+
+        var allEnemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+
+        foreach (Enemy enemy in allEnemies)
+            enemy.Stop();  
+        
+
+        if (animator != null)
+        {
+            switch (state)
+            {
+                case DeathState.Time:
+                    animator.SetTrigger("Appear");
+                    break;
+
+                case DeathState.Dead:
+                    animator.SetTrigger("Appear");
+                    break;
+
+                default:
+                    Debug.LogWarning("Estado de muerte no reconocido.");
+                    break;
+            }
+        }
+    }
 
 }

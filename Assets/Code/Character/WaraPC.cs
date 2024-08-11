@@ -18,6 +18,7 @@ public class WaraPC : MonoBehaviour
     public float fallMultiplier = 2.5f;
     public float lowJumpMultiplier = 2f;
     public Animator animator;
+    public Animator CharAnimator;
 
     public Color damageColor = Color.red;  // Color del personaje cuando recibe daño
     public Color normalColor = Color.white;  // Color normal del personaje
@@ -27,7 +28,7 @@ public class WaraPC : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public int Life = 5;
 
-    public float Charactersize = .2f;
+    public float Charactersize = 1;
 
     public float dashCooldownTimer;
 
@@ -37,6 +38,12 @@ public class WaraPC : MonoBehaviour
     private bool isDashing;
     private float dashTime;
     private bool golpeado;
+
+
+    public Transform SwordPosition;
+    public float Radius;
+    public LayerMask CollisionLayer;
+    public float pushForce = 10f;
 
 
     void Start()
@@ -51,14 +58,19 @@ public class WaraPC : MonoBehaviour
         Jump();
         HandleDash();
         AdjustFallSpeed();
+        Golpe();
     }
 
     void Move()
     {
         if(isDashing && golpeado) return;
 
+        
         float moveInput = Input.GetAxis("Horizontal");
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+
+
+        CharAnimator.SetBool("bWalk", moveInput != 0);
 
         if (moveInput > 0) transform.localScale = new Vector3(Charactersize, Charactersize, Charactersize);  // Flip character sprite to the right
         else if (moveInput < 0) transform.localScale = new Vector3(-Charactersize, Charactersize, Charactersize); // Flip character sprite to the left
@@ -70,6 +82,7 @@ public class WaraPC : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             canDoubleJump = true;
+            
         }
         else if (Input.GetButtonDown("Jump") && canDoubleJump)
         {
@@ -80,17 +93,17 @@ public class WaraPC : MonoBehaviour
 
     void AdjustFallSpeed()
     {
-        if (rb.velocity.y < 0) // When falling
+        if (rb.velocity.y < 0)
         {
             rb.gravityScale = fallMultiplier;
         }
-        else if (rb.velocity.y > 0 && !Input.GetButton("Jump")) // When rising but not holding jump
+        else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
         {
             rb.gravityScale = lowJumpMultiplier;
         }
         else
         {
-            rb.gravityScale = 1f; // Normal gravity
+            rb.gravityScale = 1f;
         }
     }
 
@@ -134,6 +147,7 @@ public class WaraPC : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            CharAnimator.SetBool("bJump", !isGrounded);
         }
     }
 
@@ -142,6 +156,7 @@ public class WaraPC : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+            CharAnimator.SetBool("bJump", !isGrounded);
         }
     }
 
@@ -149,6 +164,7 @@ public class WaraPC : MonoBehaviour
     public void Dead(DeathState state)
     {
         this.enabled = false;
+        CharAnimator.SetBool("bDead", true);
 
         var allEnemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
 
@@ -189,6 +205,35 @@ public class WaraPC : MonoBehaviour
         spriteRenderer.color = normalColor;
         isInvulnerable = false;
         golpeado = false;
+    }
+
+
+    void Golpe()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            CharAnimator.SetTrigger("Attack");
+
+            RaycastHit2D Hit = Physics2D.CircleCast(transform.position, Radius, Vector2.zero, 0, CollisionLayer);
+
+
+            if (Hit.collider != null)
+            {
+                // Aplica daño al enemigo
+                Hit.collider.GetComponent<Enemy>().TakeDamage();
+
+                // Empuja al enemigo hacia atrás
+                Rigidbody2D enemyRb = Hit.collider.GetComponent<Rigidbody2D>();
+                if (enemyRb != null)
+                {
+                    // Calcula la dirección de empuje
+                    Vector2 pushDirection = (Hit.collider.transform.position - transform.position).normalized;
+
+                    // Aplica la fuerza de empuje
+                    enemyRb.AddForce(pushDirection * pushForce);
+                }
+            }
+        }
     }
 
 }

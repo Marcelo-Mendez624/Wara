@@ -31,14 +31,6 @@ public class Enemy : MonoBehaviour
 
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Wara"))
-        {
-            //TODO Player damage
-        }
-    }
-
     public void TakeDamage()
     {
         life = life - 1;
@@ -53,7 +45,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private IEnumerator GolpeadoCoroutine()
+    IEnumerator GolpeadoCoroutine()
     {
         golpeado = true;
 
@@ -64,7 +56,7 @@ public class Enemy : MonoBehaviour
         golpeado = false;
     }
 
-     private IEnumerator DeadCoroutine()
+    IEnumerator DeadCoroutine()
     {
         yield return new WaitForSeconds(3);
         Destroy(gameObject);

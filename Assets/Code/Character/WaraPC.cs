@@ -19,6 +19,14 @@ public class WaraPC : MonoBehaviour
     public float lowJumpMultiplier = 2f;
     public Animator animator;
 
+    public Color damageColor = Color.red;  // Color del personaje cuando recibe daño
+    public Color normalColor = Color.white;  // Color normal del personaje
+    public float invulnerabilityDuration = 0.5f;  // Duración de la invulnerabilidad
+
+    private bool isInvulnerable = false;  // Indica si el personaje es invulnerable
+    private SpriteRenderer spriteRenderer;
+    public int Life = 5;
+
     public float Charactersize = .2f;
 
     public float dashCooldownTimer;
@@ -28,11 +36,13 @@ public class WaraPC : MonoBehaviour
     private bool canDoubleJump;
     private bool isDashing;
     private float dashTime;
+    private bool golpeado;
 
 
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -45,7 +55,7 @@ public class WaraPC : MonoBehaviour
 
     void Move()
     {
-        if(isDashing) return;
+        if(isDashing && golpeado) return;
 
         float moveInput = Input.GetAxis("Horizontal");
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
@@ -143,26 +153,42 @@ public class WaraPC : MonoBehaviour
         var allEnemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
 
         foreach (Enemy enemy in allEnemies)
-            enemy.Stop();  
-        
+            enemy.Stop();
 
-        if (animator != null)
+
+        animator.SetTrigger("Appear");
+    }
+
+    public void TakeDamage()
+    {
+        if (isInvulnerable)
+            return;  
+
+        Life -= 1;
+
+        spriteRenderer.color = damageColor;
+
+        if (Life <= 0)
         {
-            switch (state)
-            {
-                case DeathState.Time:
-                    animator.SetTrigger("Appear");
-                    break;
-
-                case DeathState.Dead:
-                    animator.SetTrigger("Appear");
-                    break;
-
-                default:
-                    Debug.LogWarning("Estado de muerte no reconocido.");
-                    break;
-            }
+            Dead(DeathState.Dead);
+            rb.velocity = Vector2.zero;
         }
+        else
+        {
+            StartCoroutine(InvulnerabilityCoroutine());
+        }
+    }
+
+    private IEnumerator InvulnerabilityCoroutine()
+    {
+        isInvulnerable = true;
+        golpeado = true;
+
+        yield return new WaitForSeconds(invulnerabilityDuration);
+
+        spriteRenderer.color = normalColor;
+        isInvulnerable = false;
+        golpeado = false;
     }
 
 }

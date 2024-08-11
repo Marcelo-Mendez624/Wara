@@ -7,7 +7,7 @@ public class Attack : MonoBehaviour
     public Transform SwordPosition;
     public float Radius;
     public LayerMask CollisionLayer;
-    public float pushForce = 10f; // Ajusta la fuerza según sea necesario
+    public float pushForce = 10f; 
 
     // Start is called before the first frame update
     void Start()
